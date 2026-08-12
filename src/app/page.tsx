@@ -1,6 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+
 export default function Home() {
+  const [isPolaroidFront, setIsPolaroidFront] = useState(false);
 
   return (
     <main className="relative min-h-screen bg-[#0B0B0D] text-white overflow-x-hidden selection:bg-[#2A30FF] selection:text-white">
@@ -101,12 +104,6 @@ export default function Home() {
         </footer>
       </section>
 
-
-
-
-
-
-
       {/* Page 2: About / Profile Section */}
       <section className="relative min-h-screen bg-grid-pattern px-6 sm:px-10 md:px-14 py-16 sm:py-24 flex items-center justify-center overflow-hidden">
         {/* Top Right Scribble Brush SVG (Half Cropped) */}
@@ -144,8 +141,27 @@ export default function Home() {
         {/* Content Container (Perfectly Centered Composition Alignment) */}
         <div className="relative z-10 max-w-6xl w-full mx-auto flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6">
 
-          {/* Left: Polaroid Photo Card (Shifted further right over the blue card) */}
-          <div className="relative z-20 shrink-0 w-full max-w-[280px] sm:max-w-[320px] lg:translate-x-12 bg-white rounded-2xl p-4 sm:p-5 pb-6 shadow-2xl shadow-black/80 transform rotate-6 hover:rotate-0 transition-transform duration-300">
+          {/* Mobile Tap Instruction Button */}
+          <button
+            onClick={() => setIsPolaroidFront(!isPolaroidFront)}
+            className="lg:hidden mb-3 px-4 py-2 bg-[#2A30FF] border-2 border-white text-white font-pixelify text-xs font-bold rounded-full shadow-xl animate-bounce flex items-center gap-2 cursor-pointer z-40 active:scale-95 transition-transform select-none"
+          >
+            <span>📸</span>
+            <span>{isPolaroidFront ? "Klik untuk masukkan foto ke saku" : "Klik untuk keluarkan foto dari saku"}</span>
+          </button>
+
+          {/* Left: Polaroid Photo Card (Pocket Photo behavior on Mobile: Straight without tilt, deeply tucked, pops in front on tap) */}
+          <div
+            onClick={() => setIsPolaroidFront(!isPolaroidFront)}
+            className={`cursor-pointer shrink-0 w-full max-w-[280px] sm:max-w-[320px] bg-white rounded-2xl p-4 sm:p-5 pb-6 shadow-2xl shadow-black/80 transform transition-all duration-500 ease-out
+              rotate-0 lg:rotate-6 lg:hover:rotate-0
+              ${isPolaroidFront
+                ? 'relative z-30 translate-y-0 opacity-100 scale-100'
+                : 'relative z-10 lg:z-20 -mb-48 lg:mb-0 translate-y-12 lg:translate-y-0 opacity-90 lg:opacity-100 scale-90 lg:scale-100'
+              }
+              lg:translate-x-12
+            `}
+          >
             {/* Photo Container Frame */}
             <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#2D3812] flex flex-col items-center justify-center">
               {/* Photo tag (Pointing to public/profile.png) */}
@@ -187,7 +203,7 @@ export default function Home() {
           </div>
 
           {/* Right: Blue Name Card (Stretches behind Polaroid, content positioned on right) */}
-          <div className="relative z-10 w-full lg:flex-1 -mt-10 lg:mt-0 lg:-ml-32 bg-[#2A30FF] rounded-xl p-6 sm:p-8 lg:py-7 lg:pl-56 lg:pr-10 shadow-2xl shadow-[#2A30FF]/30 flex items-center justify-end">
+          <div className="relative z-20 lg:z-10 w-full lg:flex-1 -mt-10 lg:mt-0 lg:-ml-32 bg-[#2A30FF] rounded-xl p-6 sm:p-8 lg:py-7 lg:pl-56 lg:pr-10 shadow-2xl shadow-[#2A30FF]/30 flex items-center justify-end">
             {/* White Rectangle Outline Frame (Aligned to right) */}
             <div className="border-2 border-white p-6 sm:p-7 rounded-sm relative flex flex-col justify-between gap-4 sm:gap-5 ml-auto w-full max-w-2xl">
               {/* Small Solid White Square Corner Box */}
