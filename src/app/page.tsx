@@ -1,6 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+// Reusable Scroll Fade-In Observer Component for Smooth Page Animations
+function FadeIn({
+  children,
+  className = '',
+  delay = 0,
+  direction = 'up',
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.12 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getTransform = () => {
+    if (isVisible) return 'translate-x-0 translate-y-0 opacity-100 scale-100';
+    switch (direction) {
+      case 'up':
+        return 'translate-y-10 opacity-0';
+      case 'down':
+        return '-translate-y-10 opacity-0';
+      case 'left':
+        return '-translate-x-12 opacity-0';
+      case 'right':
+        return 'translate-x-12 opacity-0';
+      default:
+        return 'opacity-0 scale-95';
+    }
+  };
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${getTransform()} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Home() {
   const [isPolaroidFront, setIsPolaroidFront] = useState(false);
@@ -42,66 +101,74 @@ export default function Home() {
         </svg>
 
         {/* Top Navigation */}
-        <nav className="relative z-10 flex justify-between items-center max-w-7xl w-full mx-auto text-base sm:text-lg md:text-xl font-pixelify tracking-wider pt-1 sm:pt-2">
-          <span className="text-white">Hello!</span>
-          <span className="text-[#2A30FF]">Hai?</span>
-          <span className="text-white">Welcome</span>
-          <span className="text-[#2A30FF]">To</span>
-          <span className="text-white">My</span>
-          <span className="text-[#2A30FF]">Web</span>
-        </nav>
+        <FadeIn direction="down" delay={100} className="w-full">
+          <nav className="relative z-10 flex justify-between items-center max-w-7xl w-full mx-auto text-base sm:text-lg md:text-xl font-pixelify tracking-wider pt-1 sm:pt-2">
+            <span className="text-white hover:text-[#2A30FF] transition-colors duration-200 cursor-pointer">Hello!</span>
+            <span className="text-[#2A30FF] hover:text-white transition-colors duration-200 cursor-pointer">Hai?</span>
+            <span className="text-white hover:text-[#2A30FF] transition-colors duration-200 cursor-pointer">Welcome</span>
+            <span className="text-[#2A30FF] hover:text-white transition-colors duration-200 cursor-pointer">To</span>
+            <span className="text-white hover:text-[#2A30FF] transition-colors duration-200 cursor-pointer">My</span>
+            <span className="text-[#2A30FF] hover:text-white transition-colors duration-200 cursor-pointer">Web</span>
+          </nav>
+        </FadeIn>
 
         {/* Hero Section */}
         <section className="relative z-10 max-w-7xl w-full mx-auto my-auto py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left: Huge PORTFOLIO Bitmap Typography using Press Start 2P */}
           <div className="lg:col-span-8 select-none">
-            <h1 className="font-pixel text-4xl sm:text-6xl md:text-8xl lg:text-[100px] xl:text-[118px] leading-[1.08] tracking-normal uppercase">
-              <div className="flex flex-wrap">
-                <span className="text-white">POR</span>
-                <span className="text-[#2A30FF]">T</span>
-              </div>
-              <div className="flex flex-wrap">
-                <span className="text-white">F</span>
-                <span className="text-[#2A30FF]">O</span>
-                <span className="text-white">LIO</span>
-              </div>
-            </h1>
+            <FadeIn direction="left" delay={200}>
+              <h1 className="font-pixel text-4xl sm:text-6xl md:text-8xl lg:text-[100px] xl:text-[118px] leading-[1.08] tracking-normal uppercase">
+                <div className="flex flex-wrap">
+                  <span className="text-white hover:text-[#2A30FF] transition-colors duration-300">POR</span>
+                  <span className="text-[#2A30FF] hover:text-white transition-colors duration-300">T</span>
+                </div>
+                <div className="flex flex-wrap">
+                  <span className="text-white hover:text-[#2A30FF] transition-colors duration-300">F</span>
+                  <span className="text-[#2A30FF] hover:text-white transition-colors duration-300">O</span>
+                  <span className="text-white hover:text-[#2A30FF] transition-colors duration-300">LIO</span>
+                </div>
+              </h1>
+            </FadeIn>
           </div>
 
           {/* Right: Abstract Interlocking Blocks Composition */}
           <div className="lg:col-span-4 flex justify-center lg:justify-end">
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72">
-              {/* Top Right Blue Block */}
-              <div className="absolute top-0 right-8 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF]" />
-              {/* Middle Upper White Block */}
-              <div className="absolute top-8 left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white" />
-              {/* Middle Left Blue Block */}
-              <div className="absolute top-20 left-0 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF]" />
-              {/* Middle Right White Block */}
-              <div className="absolute top-24 right-0 w-24 h-24 sm:w-28 sm:h-28 bg-white" />
-              {/* Bottom Right Blue Block */}
-              <div className="absolute bottom-8 right-10 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF]" />
-              {/* Bottom Left White Block */}
-              <div className="absolute bottom-0 left-10 w-24 h-24 sm:w-28 sm:h-28 bg-white" />
-            </div>
+            <FadeIn direction="right" delay={350}>
+              <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 animate-float">
+                {/* Top Right Blue Block */}
+                <div className="absolute top-0 right-8 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF] hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+                {/* Middle Upper White Block */}
+                <div className="absolute top-8 left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+                {/* Middle Left Blue Block */}
+                <div className="absolute top-20 left-0 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF] hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+                {/* Middle Right White Block */}
+                <div className="absolute top-24 right-0 w-24 h-24 sm:w-28 sm:h-28 bg-white hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+                {/* Bottom Right Blue Block */}
+                <div className="absolute bottom-8 right-10 w-24 h-24 sm:w-28 sm:h-28 bg-[#2A30FF] hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+                {/* Bottom Left White Block */}
+                <div className="absolute bottom-0 left-10 w-24 h-24 sm:w-28 sm:h-28 bg-white hover:scale-110 hover:z-20 transition-all duration-300 shadow-xl cursor-pointer" />
+              </div>
+            </FadeIn>
           </div>
         </section>
 
         {/* Footer Section */}
-        <footer className="relative z-10 max-w-7xl w-full mx-auto flex flex-col sm:flex-row justify-between items-end gap-6 pb-1 sm:pb-2">
-          {/* Bottom Left Description */}
-          <p className="font-pixelify text-sm sm:text-base text-gray-200 max-w-lg leading-relaxed">
-            Welcome to my <span className="text-[#2A30FF]">portfolio.</span> I&apos;m excited to share this curated collection of <span className="text-[#2A30FF]">projects with you</span>, which demonstrates my skills and my approach to solving creative challenges.
-          </p>
+        <FadeIn direction="up" delay={500} className="w-full">
+          <footer className="relative z-10 max-w-7xl w-full mx-auto flex flex-col sm:flex-row justify-between items-end gap-6 pb-1 sm:pb-2">
+            {/* Bottom Left Description */}
+            <p className="font-pixelify text-sm sm:text-base text-gray-200 max-w-lg leading-relaxed">
+              Welcome to my <span className="text-[#2A30FF]">portfolio.</span> I&apos;m excited to share this curated collection of <span className="text-[#2A30FF]">projects with you</span>, which demonstrates my skills and my approach to solving creative challenges.
+            </p>
 
-          {/* Bottom Right Stacked Year Badge */}
-          <div className="font-pixel grid grid-cols-2 gap-x-2 gap-y-1 text-xl sm:text-2xl leading-none select-none text-right">
-            <span className="text-white">2</span>
-            <span className="text-white">0</span>
-            <span className="text-[#2A30FF]">2</span>
-            <span className="text-[#2A30FF]">6</span>
-          </div>
-        </footer>
+            {/* Bottom Right Stacked Year Badge */}
+            <div className="font-pixel grid grid-cols-2 gap-x-2 gap-y-1 text-xl sm:text-2xl leading-none select-none text-right hover:scale-105 transition-transform duration-300 cursor-default">
+              <span className="text-white">2</span>
+              <span className="text-white">0</span>
+              <span className="text-[#2A30FF]">2</span>
+              <span className="text-[#2A30FF]">6</span>
+            </div>
+          </footer>
+        </FadeIn>
       </section>
 
       {/* Page 2: About / Profile Section */}
@@ -203,11 +270,11 @@ export default function Home() {
           </div>
 
           {/* Right: Blue Name Card (Stretches behind Polaroid, content positioned on right) */}
-          <div className="relative z-20 lg:z-10 w-full lg:flex-1 -mt-10 lg:mt-0 lg:-ml-32 bg-[#2A30FF] rounded-xl p-6 sm:p-8 lg:py-7 lg:pl-56 lg:pr-10 shadow-2xl shadow-[#2A30FF]/30 flex items-center justify-end">
+          <div className="relative z-20 lg:z-10 w-full lg:flex-1 -mt-10 lg:mt-0 lg:-ml-32 bg-[#2A30FF] rounded-xl p-6 sm:p-8 lg:py-7 lg:pl-56 lg:pr-10 shadow-2xl shadow-[#2A30FF]/30 hover:shadow-[#2A30FF]/60 transition-all duration-500 flex items-center justify-end">
             {/* White Rectangle Outline Frame (Aligned to right) */}
             <div className="border-2 border-white p-6 sm:p-7 rounded-sm relative flex flex-col justify-between gap-4 sm:gap-5 ml-auto w-full max-w-2xl">
               {/* Small Solid White Square Corner Box */}
-              <div className="absolute -top-2.5 -right-2.5 w-4 h-4 bg-white" />
+              <div className="absolute -top-2.5 -right-2.5 w-4 h-4 bg-white animate-pulse" />
 
               {/* Greeting Header */}
               <div>
@@ -225,13 +292,13 @@ export default function Home() {
 
               {/* Professional Role Badges */}
               <div className="flex flex-wrap gap-2.5 sm:gap-3">
-                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm">
+                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm hover:-translate-y-1 hover:scale-105 hover:bg-[#0B0B0D] hover:text-white transition-all duration-300 cursor-pointer select-none">
                   UI/UX DESIGNER
                 </span>
-                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm">
+                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm hover:-translate-y-1 hover:scale-105 hover:bg-[#0B0B0D] hover:text-white transition-all duration-300 cursor-pointer select-none">
                   GRAPHIC DESIGNER
                 </span>
-                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm">
+                <span className="bg-white text-black font-pixelify text-base sm:text-[16px] font-medium px-4 py-2 sm:py-2.5 rounded-lg uppercase shadow-sm hover:-translate-y-1 hover:scale-105 hover:bg-[#0B0B0D] hover:text-white transition-all duration-300 cursor-pointer select-none">
                   FE DEVELOPER
                 </span>
               </div>
@@ -243,38 +310,40 @@ export default function Home() {
 
       {/* Page 3: Tools & Languages Compact Slider Strip */}
       <section className="relative bg-[#0B0B0D] py-8 sm:py-10 px-4 flex flex-col items-center justify-center overflow-hidden border-t border-b border-white/10">
-        {/* Compact Header */}
-        <div className="text-center mb-5 select-none z-10">
-          <span className="font-pixelify text-xs sm:text-sm text-[#2A30FF] tracking-widest uppercase font-bold">
-            TOOLS  <span className='text-white'>&</span> LANGUAGES
-          </span>
-        </div>
+        <FadeIn direction="up" delay={100} className="w-full">
+          {/* Compact Header */}
+          <div className="text-center mb-5 select-none z-10">
+            <span className="font-pixelify text-xs sm:text-sm text-[#2A30FF] tracking-widest uppercase font-bold">
+              TOOLS  <span className='text-white'>&</span> LANGUAGES
+            </span>
+          </div>
 
-        {/* Marquee Ribbon Container (Single Row) */}
-        <div className="w-full relative z-10">
-          {/* Gradient Fades on edges */}
-          <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-[#0B0B0D] to-transparent z-20 pointer-events-none" />
-          <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-[#0B0B0D] to-transparent z-20 pointer-events-none" />
+          {/* Marquee Ribbon Container (Single Row) */}
+          <div className="w-full relative z-10">
+            {/* Gradient Fades on edges */}
+            <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-[#0B0B0D] to-transparent z-20 pointer-events-none" />
+            <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-[#0B0B0D] to-transparent z-20 pointer-events-none" />
 
-          {/* Marquee Row */}
-          <div className="overflow-hidden w-full flex">
-            <div className="animate-marquee flex gap-4 sm:gap-6 pr-4 sm:pr-6">
-              {[...toolsList, ...toolsList].map((tool, idx) => (
-                <div
-                  key={`r1-${idx}`}
-                  className="flex items-center gap-3 sm:gap-4 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-[#141417]/90 border border-white/10 shadow-lg hover:border-[#2A30FF] hover:bg-[#1a1a24] transition-all duration-300 shrink-0 select-none group"
-                >
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    {tool.icon}
+            {/* Marquee Row */}
+            <div className="overflow-hidden w-full flex">
+              <div className="animate-marquee flex gap-4 sm:gap-6 pr-4 sm:pr-6">
+                {[...toolsList, ...toolsList].map((tool, idx) => (
+                  <div
+                    key={`r1-${idx}`}
+                    className="flex items-center gap-3 sm:gap-4 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-[#141417]/90 border border-white/10 shadow-lg hover:border-[#2A30FF] hover:bg-[#1a1a24] transition-all duration-300 shrink-0 select-none group"
+                  >
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      {tool.icon}
+                    </div>
+                    <span className="font-poppins text-xs sm:text-sm font-bold text-gray-200 group-hover:text-white tracking-wide whitespace-nowrap">
+                      {tool.name}
+                    </span>
                   </div>
-                  <span className="font-poppins text-xs sm:text-sm font-bold text-gray-200 group-hover:text-white tracking-wide whitespace-nowrap">
-                    {tool.name}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* Page 4: All Project Section */}
@@ -344,114 +413,125 @@ export default function Home() {
         </svg>
 
         {/* Section Header */}
-        <div className="relative z-10 max-w-7xl w-full mx-auto mb-12 sm:mb-16 select-none">
-          <h2 className="font-pixel text-4xl sm:text-6xl md:text-7xl leading-tight uppercase">
-            <div className="text-white">All</div>
-            <div className="text-[#2A30FF]">Project</div>
-          </h2>
-          <p className="font-pixelify text-xs sm:text-sm text-gray-400 mt-2">
-            *beberapa project tidak di <span className="text-[#2A30FF]">publish</span>
-          </p>
-        </div>
+        <FadeIn direction="left" delay={100}>
+          <div className="relative z-10 max-w-7xl w-full mx-auto mb-12 sm:mb-16 select-none">
+            <h2 className="font-pixel text-4xl sm:text-6xl md:text-7xl leading-tight uppercase">
+              <div className="text-white hover:text-[#2A30FF] transition-colors duration-300">All</div>
+              <div className="text-[#2A30FF] hover:text-white transition-colors duration-300">Project</div>
+            </h2>
+            <p className="font-pixelify text-xs sm:text-sm text-gray-400 mt-2">
+              *beberapa project tidak di <span className="text-[#2A30FF]">publish</span>
+            </p>
+          </div>
+        </FadeIn>
 
         {/* Staggered Project Cards Layout */}
         <div className="relative z-10 max-w-7xl w-full mx-auto space-y-16 sm:space-y-20 mb-16">
           {projectsList.map((project, idx) => {
             const isEven = idx % 2 === 1;
             return (
-              <div key={project.id} className="grid grid-cols-1 md:grid-cols-12">
-                <div
-                  className={`md:col-span-8 lg:col-span-7 ${
-                    isEven ? 'md:col-start-5 lg:col-start-6' : ''
-                  }`}
-                >
-                  {/* Card Container */}
-                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-[#16161a] group">
-                    {/* Project Preview Image */}
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-                        // Fallback styled mockup preview when image file is not found yet
-                        e.currentTarget.style.display = 'none';
-                        const fallback = e.currentTarget.parentElement?.querySelector('.project-fallback');
-                        if (fallback) fallback.classList.remove('hidden');
-                      }}
-                    />
+              <FadeIn
+                key={project.id}
+                direction={isEven ? 'right' : 'left'}
+                delay={150 + idx * 100}
+                className="w-full"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-12">
+                  <div
+                    className={`md:col-span-8 lg:col-span-7 ${
+                      isEven ? 'md:col-start-5 lg:col-start-6' : ''
+                    }`}
+                  >
+                    {/* Card Container (Hover Lift & Glow Shadow) */}
+                    <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-[#16161a] group hover:-translate-y-2.5 hover:shadow-2xl hover:shadow-[#2A30FF]/30 hover:border-[#2A30FF]/60 transition-all duration-500">
+                      {/* Project Preview Image */}
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        onError={(e) => {
+                          // Fallback styled mockup preview when image file is not found yet
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.parentElement?.querySelector('.project-fallback');
+                          if (fallback) fallback.classList.remove('hidden');
+                        }}
+                      />
 
-                    {/* Fallback Mockup View (Shown when project image file is missing) */}
-                    <div className="project-fallback hidden absolute inset-0 bg-gradient-to-br from-[#1a1a24] to-[#0d0d12] p-6 sm:p-10 flex flex-col justify-between">
-                      {/* Fake Browser Address Bar */}
-                      <div className="flex items-center gap-2 border-b border-white/10 pb-4">
-                        <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                        <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                        <span className="font-pixelify text-xs text-gray-400 ml-3">
-                          https://{project.title.toLowerCase().replace(/\s+/g, '')}
-                        </span>
-                      </div>
-                      {/* Fake Website Content Body */}
-                      <div className="my-auto space-y-3 max-w-md">
-                        <span className="font-pixelify text-xs text-[#2A30FF] uppercase tracking-widest font-bold">
-                          PROJECT PREVIEW
-                        </span>
-                        <h4 className="font-poppins text-xl sm:text-3xl font-extrabold text-white leading-tight">
-                          {project.description}
-                        </h4>
-                      </div>
-                    </div>
-
-                    {/* Bottom Translucent Overlay Bar */}
-                    <div className="absolute bottom-0 inset-x-0 bg-black/80 backdrop-blur-md p-4 sm:p-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 z-20">
-                      {/* Left Side: Title & Role Badge */}
-                      <div>
-                        <h3 className="font-pixelify text-lg sm:text-2xl font-bold text-white tracking-wide">
-                          {project.title}
-                        </h3>
-                        <div className="mt-1.5">
-                          <span className="bg-[#6b5816]/90 text-[#FFF3A3] border border-[#A68928]/60 font-pixelify text-xs sm:text-sm font-bold px-3 py-1 rounded inline-block shadow-sm">
-                            {project.category}
+                      {/* Fallback Mockup View (Shown when project image file is missing) */}
+                      <div className="project-fallback hidden absolute inset-0 bg-gradient-to-br from-[#1a1a24] to-[#0d0d12] p-6 sm:p-10 flex flex-col justify-between">
+                        {/* Fake Browser Address Bar */}
+                        <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+                          <div className="w-3 h-3 rounded-full bg-red-500/80 animate-pulse" />
+                          <div className="w-3 h-3 rounded-full bg-yellow-500/80 animate-pulse" />
+                          <div className="w-3 h-3 rounded-full bg-green-500/80 animate-pulse" />
+                          <span className="font-pixelify text-xs text-gray-400 ml-3">
+                            https://{project.title.toLowerCase().replace(/\s+/g, '')}
                           </span>
+                        </div>
+                        {/* Fake Website Content Body */}
+                        <div className="my-auto space-y-3 max-w-md">
+                          <span className="font-pixelify text-xs text-[#2A30FF] uppercase tracking-widest font-bold">
+                            PROJECT PREVIEW
+                          </span>
+                          <h4 className="font-poppins text-xl sm:text-3xl font-extrabold text-white leading-tight">
+                            {project.description}
+                          </h4>
                         </div>
                       </div>
 
-                      {/* Right Side: Visit Link Button */}
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white text-black font-pixelify font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-gray-200 active:scale-95 transition-all flex items-center gap-2 shadow-lg text-sm sm:text-base whitespace-nowrap select-none"
-                      >
-                        <span>Visit</span>
-                        <svg
-                          className="w-4 h-4 text-black"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {/* Bottom Translucent Overlay Bar */}
+                      <div className="absolute bottom-0 inset-x-0 bg-black/80 backdrop-blur-md p-4 sm:p-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 z-20">
+                        {/* Left Side: Title & Role Badge */}
+                        <div>
+                          <h3 className="font-pixelify text-lg sm:text-2xl font-bold text-white tracking-wide group-hover:text-[#2A30FF] transition-colors duration-300">
+                            {project.title}
+                          </h3>
+                          <div className="mt-1.5">
+                            <span className="bg-[#2A30FF]/70 text-white border border-white/60 font-pixelify text-xs sm:text-sm font-bold px-3 py-1 rounded inline-block shadow-sm">
+                              {project.category}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Right Side: Visit Link Button */}
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-white text-black font-pixelify font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-[#2A30FF] hover:text-white active:scale-95 transition-all duration-300 flex items-center gap-2 shadow-lg text-sm sm:text-base whitespace-nowrap select-none group/btn"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2.5"
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
+                          <span>Visit</span>
+                          <svg
+                            className="w-4 h-4 text-black group-hover/btn:text-white transition-colors duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2.5"
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </FadeIn>
             );
           })}
         </div>
 
         {/* Bottom Center Button */}
-        <div className="relative z-10 flex justify-center pb-6 select-none">
-          <button className="bg-white text-black font-pixelify font-bold px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg hover:bg-gray-200 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer">
-            Tampilkan Semua
-          </button>
-        </div>
+        <FadeIn direction="up" delay={200} className="w-full flex justify-center">
+          <div className="relative z-10 flex justify-center pb-6 select-none">
+            <button className="bg-white text-black font-pixelify font-bold px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg hover:bg-[#2A30FF] hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl cursor-pointer">
+              Tampilkan Semua
+            </button>
+          </div>
+        </FadeIn>
       </section>
     </main>
   );
